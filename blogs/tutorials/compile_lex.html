@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEX Tutorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        code {
+            font-family: "Courier New", monospace;
+            background-color: #f4f4f4;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .c-code {
+            display: block;
+            font-family: "Courier New", monospace;
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Getting started with LEX</h1>
+    <p>Welcome to the LEX Tutorial. In this we will cover some basics of LEX.</p>
+
+    <h2>Installing FLEX</h2>
+    <p>For Ubuntu, install using:</p>
+    <pre>
+        <code class="c-code">
+        $ sudo apt-get install flex
+        </code>
+        </pre>
+
+    <h2>Example LEX File</h2>
+    <p>Let's start with a classic example: Seperating words and numbers.</p>
+    <pre>
+        <code class="c-code">
+    /* LEX specification for the Example */
+    %%
+    [0-9]+   { printf("NUMBER: %s\n", yytext); }
+    [a-zA-Z]+   { printf("WORD: %s\n", yytext); }
+    %%
+    int yywrap(){}
+    int main(){yylex();}
+        </code>
+    </pre>
+
+    <h2>Compiling</h2>
+    <p>Save your LEX file with `.l` . Run `flex` command to generate C source code of the lexer.</p>
+    <pre>
+        <code class="c-code">
+    $ flex lex.l
+        </code>
+        </pre>
+    <p>Now you need to compile the generated source code (`lex.yy.c`) to create an executable.</p>
+    <pre>
+            <code class="c-code">
+    $ gcc lex.yy.l -o lexer -lfl
+            </code>
+            </pre>
+            <p>After compilation, you can run the generated executable to tokenize input files:</p>
+            <pre>
+                <code class="c-code">
+    $ ./lexer input.txt
+
+                </code>
+                </pre>
+
+</body>
+
+</html>
