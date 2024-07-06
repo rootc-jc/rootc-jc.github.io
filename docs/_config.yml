@@ -23,7 +23,7 @@ title: Jayachandra's Website
 email: jayachandranaidurajapu@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Under construction
-baseurl: "/rootc-jc.github.io/" # the subpath of your site, e.g. /blog
+baseurl: "/rootc-jc.github.io" # the subpath of your site, e.g. /blog
 url: "https://rootc-jc.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: rootc_jc
 github_username:  rootc-jc
