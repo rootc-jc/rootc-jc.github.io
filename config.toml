@@ -1,0 +1,13 @@
+baseURL = 'rootc-jc.online'
+languageCode = 'en-us'
+title = 'My New Hugo Site'
+theme = 'risotto'
+
+sectionPagesMenu = "main"
+
+[menu]
+
+  [[menu.main]]
+    identifier = "about"
+    name = "about me"
+    url = "/about/"
