@@ -1,7 +1,31 @@
-baseURL = 'rootc-jc.online'
+baseURL = 'https://rootc-jc.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'jayachandra'
 theme = 'risotto'
+author = 'Jayachandra'
+
+# Sidebar: about/bio
+[params.about]
+title = "rootc-jc"
+description = "My personal website!"
+
+[params.theme]
+palette="base16-dark"
+
+[[params.socialLinks]]
+icon = "fa-brands fa-github"
+title = "GitHub"
+url = "https://github.com/rootc-jc"
+
+[[params.socialLinks]]
+icon = "fa-brands fa-twitter"
+title = "X"
+url = "https://x.com/rootc_jc"
+
+[[params.socialLinks]]
+icon = "fa fa-file"
+title = "Resume"
+url = "https://drive.google.com/file/d/1IDYPVVUWnzEPAd0b5Dci7R9gt2vREr07/view?usp=sharing"
 
 sectionPagesMenu = "main"
 
@@ -11,3 +35,10 @@ sectionPagesMenu = "main"
     identifier = "about"
     name = "about me"
     url = "/about/"
+    weight = 1
+
+  [[menu.main]]
+    identifier = "progress-reports"
+    name = "Progress Reports"
+    url = "/progress-reports/"
+    weight = 2
