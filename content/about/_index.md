@@ -4,4 +4,4 @@ date: 2024-08-22T01:54:37+05:30
 draft: false
 ---
 
-Hello! I am Jayachandra.
+Hello! I am Jayachandra. I am currently open for Compiler Engineer roles.
