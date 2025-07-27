@@ -38,7 +38,7 @@ sectionPagesMenu = "main"
     weight = 1
 
   [[menu.main]]
-    identifier = "progress-reports"
+    identifier = "progress-reports-failed"
     name = "Progress Reports"
-    url = "/progress-reports/"
+    url = "/progress-reports-failed/"
     weight = 2
