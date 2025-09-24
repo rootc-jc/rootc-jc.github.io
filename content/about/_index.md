@@ -9,4 +9,6 @@ During my time there, I worked extensively on Compilers with the Compilers group
 
 I have done good coursework in the field of Compilers and Computer Architecture. Just to list, Compilers 1 & 2, Intro to Compiler Engineering, Adv. Compiler Engineering, Adv. Compiler Optimizations, Intro to Program Analysis and Optimizations, Computer Architecture and Adv. Computer Architecture. I have also done the general Computer Science coursework.
 
-I am currently looking for full-time opportunities (even internships) in the field of Compiler Engineering, either with LLVM or MLIR. You can find my resume on the sidebar (click on the file icon).
+~~I am currently looking for full-time opportunities (even internships) in the field of Compiler Engineering, either with LLVM or MLIR. You can find my resume on the sidebar (click on the file icon).~~
+
+I am joining Xilinx (AMD) as a C++ developer.
