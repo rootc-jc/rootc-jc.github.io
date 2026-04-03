@@ -4,6 +4,10 @@ title = 'jayachandra'
 theme = 'risotto'
 author = 'Jayachandra'
 
+[services]
+  [services.googleAnalytics]
+    id = 'G-YXS7L3LT6F'
+
 # Sidebar: about/bio
 [params.about]
 title = "rootc-jc"
