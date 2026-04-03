@@ -1,0 +1,31 @@
+.prs-page__meta,
+.prs-page__summary {
+  margin: 0.8rem 0;
+}
+
+.prs-table-wrapper {
+  overflow-x: auto;
+  margin-top: 0.8rem;
+}
+
+.prs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.prs-table th,
+.prs-table td {
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--base04);
+  vertical-align: top;
+}
+
+.prs-table th {
+  border-bottom-width: 2px;
+}
+
+.prs-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}

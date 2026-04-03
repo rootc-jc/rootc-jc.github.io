@@ -1,0 +1,217 @@
+{{ define "main" }}
+    <header class="content__header">
+        <h1>{{ .Title | markdownify }}</h1>
+    </header>
+
+    <div class="content__body prs-page">
+        {{ .Content }}
+
+        <p class="prs-page__meta">
+            GitHub user:
+            <a href="https://github.com/{{ .Params.githubUser | default "rootc-jc" }}" target="_blank" rel="noopener noreferrer">@{{ .Params.githubUser | default "rootc-jc" }}</a>
+        </p>
+
+        <div
+            id="pr-list-root"
+            data-github-user="{{ .Params.githubUser | default "rootc-jc" }}"
+            data-include-repos="{{ delimit (.Params.includeRepos | default (slice)) "," }}"
+            data-exclude-repos="{{ delimit (.Params.excludeRepos | default (slice)) "," }}"
+        >
+            <p id="pr-list-status">Loading pull requests...</p>
+        </div>
+    </div>
+
+    <script>
+        (async function () {
+            const root = document.getElementById("pr-list-root");
+            if (!root) {
+                return;
+            }
+
+            const statusNode = document.getElementById("pr-list-status");
+            const user = (root.getAttribute("data-github-user") || "rootc-jc").trim();
+            const includeReposRaw = root.getAttribute("data-include-repos") || "";
+            const excludeReposRaw = root.getAttribute("data-exclude-repos") || "";
+
+            function setStatus(message) {
+                if (statusNode) {
+                    statusNode.textContent = message;
+                }
+            }
+
+            async function fetchAllPRs() {
+                const allItems = [];
+                let page = 1;
+                const perPage = 100;
+
+                while (true) {
+                    const query = new URLSearchParams({
+                        q: "author:" + user + " is:pr",
+                        sort: "created",
+                        order: "desc",
+                        per_page: String(perPage),
+                        page: String(page)
+                    });
+
+                    const response = await fetch("https://api.github.com/search/issues?" + query.toString(), {
+                        headers: {
+                            "Accept": "application/vnd.github+json"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("GitHub API returned " + response.status + " " + response.statusText);
+                    }
+
+                    const data = await response.json();
+                    const items = Array.isArray(data.items) ? data.items : [];
+                    allItems.push(...items);
+
+                    if (items.length < perPage) {
+                        break;
+                    }
+
+                    page += 1;
+                }
+
+                return allItems;
+            }
+
+            function repoFromApiUrl(apiUrl) {
+                const marker = "/repos/";
+                const idx = typeof apiUrl === "string" ? apiUrl.indexOf(marker) : -1;
+                if (idx === -1) {
+                    return "unknown";
+                }
+                return apiUrl.slice(idx + marker.length);
+            }
+
+            function parseRepoList(rawValue) {
+                if (!rawValue) {
+                    return [];
+                }
+                return rawValue
+                    .split(",")
+                    .map(function (entry) {
+                        return entry.trim().toLowerCase();
+                    })
+                    .filter(Boolean);
+            }
+
+            function applyRepoFilters(items) {
+                const includeSet = new Set(parseRepoList(includeReposRaw));
+                const excludeSet = new Set(parseRepoList(excludeReposRaw));
+
+                return items.filter(function (item) {
+                    const repo = repoFromApiUrl(item.repository_url).trim().toLowerCase();
+
+                    if (includeSet.size > 0) {
+                        return includeSet.has(repo);
+                    }
+
+                    return !excludeSet.has(repo);
+                });
+            }
+
+            function formatDate(dateString) {
+                const d = new Date(dateString);
+                if (Number.isNaN(d.getTime())) {
+                    return "-";
+                }
+                return d.toISOString().slice(0, 10);
+            }
+
+            function renderTable(items) {
+                const wrapper = document.createElement("div");
+                wrapper.className = "prs-table-wrapper";
+
+                const table = document.createElement("table");
+                table.className = "prs-table";
+
+                const thead = document.createElement("thead");
+                const trHead = document.createElement("tr");
+                ["#", "Title", "Repository", "State", "Created", "PR Link"].forEach(function (header) {
+                    const th = document.createElement("th");
+                    th.textContent = header;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+
+                const tbody = document.createElement("tbody");
+                items.forEach(function (item, index) {
+                    const tr = document.createElement("tr");
+
+                    const rank = document.createElement("td");
+                    rank.textContent = String(index + 1);
+
+                    const title = document.createElement("td");
+                    title.textContent = item.title || "(untitled)";
+
+                    const repo = document.createElement("td");
+                    repo.textContent = repoFromApiUrl(item.repository_url);
+
+                    const state = document.createElement("td");
+                    state.textContent = item.state || "-";
+
+                    const created = document.createElement("td");
+                    created.textContent = formatDate(item.created_at);
+
+                    const linkCell = document.createElement("td");
+                    const link = document.createElement("a");
+                    link.href = item.html_url;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.textContent = "View";
+                    linkCell.appendChild(link);
+
+                    tr.appendChild(rank);
+                    tr.appendChild(title);
+                    tr.appendChild(repo);
+                    tr.appendChild(state);
+                    tr.appendChild(created);
+                    tr.appendChild(linkCell);
+
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                wrapper.appendChild(table);
+                return wrapper;
+            }
+
+            try {
+                const allPRs = await fetchAllPRs();
+                const filteredPRs = applyRepoFilters(allPRs);
+
+                if (!allPRs.length) {
+                    setStatus("No pull requests found yet.");
+                    return;
+                }
+
+                if (!filteredPRs.length) {
+                    setStatus("No pull requests matched the configured repository filter.");
+                    return;
+                }
+
+                const summary = document.createElement("p");
+                summary.className = "prs-page__summary";
+                summary.textContent = "Showing " + filteredPRs.length + " of " + allPRs.length + " total PRs after repository filter.";
+
+                root.innerHTML = "";
+                root.appendChild(summary);
+                root.appendChild(renderTable(filteredPRs));
+            } catch (error) {
+                setStatus("Could not load pull requests right now. " + (error && error.message ? error.message : "Please try again later."));
+            }
+        })();
+    </script>
+
+    <footer class="content__footer"></footer>
+{{ end }}
+
+{{ define "aside" }}
+    {{ if .Params.description }}<p>{{ .Params.description }}</p>{{ end }}
+    <p>Use <strong>includeRepos</strong> to show only selected repos, or <strong>excludeRepos</strong> to hide specific personal repos.</p>
+    <p>This list is fetched live from GitHub Search API whenever the page is opened.</p>
+{{ end }}
